@@ -10,8 +10,8 @@ if (!isset($_SESSION['admin'])) {
 
 include("db.php");
 
-if (!$conn) {
-    die("Database connection failed.");
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
 }
 
 /* =============================
@@ -20,8 +20,7 @@ if (!$conn) {
 
 // ยอดรวมทั้งหมด
 $totalAll = 0;
-$sqlTotal = "SELECT SUM(amount) as total FROM orders";
-$resultTotal = $conn->query($sqlTotal);
+$resultTotal = $conn->query("SELECT SUM(amount) AS total FROM orders");
 
 if ($resultTotal) {
     $row = $resultTotal->fetch_assoc();
@@ -32,8 +31,7 @@ if ($resultTotal) {
 
 // จำนวนรายการทั้งหมด
 $countAll = 0;
-$sqlCount = "SELECT COUNT(id) as total FROM orders";
-$resultCount = $conn->query($sqlCount);
+$resultCount = $conn->query("SELECT COUNT(id) AS total FROM orders");
 
 if ($resultCount) {
     $row = $resultCount->fetch_assoc();
@@ -48,7 +46,6 @@ if ($resultCount) {
 <head>
 <meta charset="UTF-8">
 <title>สรุปยอดรวม Ticket</title>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
@@ -59,7 +56,7 @@ body { background:#0f0f14; color:white; }
 .table { background:#1a1a22; color:white; }
 .table thead { background:#6f42c1; }
 .search-input { background:#1a1a22; border:1px solid #6f42c1; color:white; }
-.search-input::placeholder { color:#9ca3af; opacity:1; }
+.search-input::placeholder { color:#9ca3af; }
 .btn-purple { background:#6f42c1; color:white; }
 .btn-purple:hover { background:#5a32a3; }
 .section-title { color:#c084fc; font-weight:600; margin-bottom:15px; }
@@ -113,8 +110,8 @@ placeholder="🔍 ค้นหา Gang...">
 
 <?php
 $sqlGang = "SELECT buyer,
-                   SUM(amount) as total,
-                   COUNT(id) as times
+                   SUM(amount) AS total,
+                   COUNT(id) AS times
             FROM orders
             WHERE category = 'Gang'
             GROUP BY buyer
@@ -125,10 +122,10 @@ $resultGang = $conn->query($sqlGang);
 if ($resultGang) {
     while ($row = $resultGang->fetch_assoc()) {
         echo "<tr>
-        <td>{$row['buyer']}</td>
-        <td style='font-weight:600;color:#c084fc;'>".number_format($row['total'])."</td>
-        <td>{$row['times']}</td>
-        </tr>";
+                <td>{$row['buyer']}</td>
+                <td style='font-weight:600;color:#c084fc;'>".number_format($row['total'])."</td>
+                <td>{$row['times']}</td>
+              </tr>";
     }
 } else {
     echo "<tr><td colspan='3'>Query Error: ".$conn->error."</td></tr>";
@@ -163,8 +160,8 @@ placeholder="🔍 ค้นหา Family...">
 
 <?php
 $sqlFamily = "SELECT buyer,
-                     SUM(amount) as total,
-                     COUNT(id) as times
+                     SUM(amount) AS total,
+                     COUNT(id) AS times
               FROM orders
               WHERE category = 'Family'
               GROUP BY buyer
@@ -175,10 +172,10 @@ $resultFamily = $conn->query($sqlFamily);
 if ($resultFamily) {
     while ($row = $resultFamily->fetch_assoc()) {
         echo "<tr>
-        <td>{$row['buyer']}</td>
-        <td style='font-weight:600;color:#c084fc;'>".number_format($row['total'])."</td>
-        <td>{$row['times']}</td>
-        </tr>";
+                <td>{$row['buyer']}</td>
+                <td style='font-weight:600;color:#c084fc;'>".number_format($row['total'])."</td>
+                <td>{$row['times']}</td>
+              </tr>";
     }
 } else {
     echo "<tr><td colspan='3'>Query Error: ".$conn->error."</td></tr>";
