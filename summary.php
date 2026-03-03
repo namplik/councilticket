@@ -1,8 +1,9 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+}
 include("db.php");
 
 // ===== ยอดรวมทั้งหมด =====
